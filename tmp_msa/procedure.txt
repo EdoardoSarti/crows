@@ -1,0 +1,22 @@
+# Step 1: check that the MSA doesn't contain anormalities
+# - No repeated sequences
+# - No repeated names
+# - No MSA columns where there are only gaps
+python3 delete_allgap_cols.py <YOUR_MSA>.afa > <YOUR_MSA>.afa
+
+
+# Step 2: transform FASTA into PHYLIP with
+python3 fasta2phylip.py <YOUR_MSA>.afa --codenames  >   <YOUR_MSA>.phy
+# (This will also remove all insertions)
+# This will create a file <YOUR_MSA>_codenames.txt that contains the table associating each codename to a sequence name
+
+# Step 3: run PhyML by changing these options (in this order!):
+- Data type -> AA
+- Optimise tree topoLOGy -> no
+- Optimise branch lengths -> no
+- Approximate likelihood ratio test -> no
+# This will generate a Newick tree file (<YOUR_MSA>.phy_phyml_tree.txt) but the names of the sequences are coded!
+
+# Step 4: put back the real sequence names instead of the codenames
+python3 rename <YOUR_MSA>_codenames.txt <YOUR_MSA>.phy_phyml_tree.txt
+# This will produce a file <YOUR_MSA>.phy_phyml_tree.txt.wl.nhx which is the one to use with iTOL
